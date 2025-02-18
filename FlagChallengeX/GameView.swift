@@ -9,6 +9,8 @@ import SwiftUI
 
 struct GameView: View {
     @StateObject private var viewModel = GameViewModel()
+    @State private var selectedAnswer: Country? = nil
+    @State private var isCorrect: Bool? = nil
 
     var body: some View {
         VStack {
@@ -23,18 +25,19 @@ struct GameView: View {
             
             ForEach(viewModel.choices, id: \.id) { country in
                 Button(action: {
-                    viewModel.checkAnswer(country)
+                    handleSelection(for: country)
                 }) {
                     Text(country.name)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue)
+                        .background(buttonColor(for: country))
                         .foregroundColor(.white)
                         .cornerRadius(10)
                         .opacity(viewModel.gameOverMode ? 0.5 : 1.0)
+                        .animation(.easeInOut(duration: 0.3), value: selectedAnswer)
                 }
                 .padding(.horizontal)
-                .disabled(viewModel.gameOverMode)
+                .disabled(viewModel.gameOverMode || selectedAnswer != nil)
             }
             
             Text("Score: \(viewModel.score)")
@@ -43,14 +46,40 @@ struct GameView: View {
             
             if viewModel.gameOverMode {
                 Button("Restart Game") {
-                    viewModel.startGame()
+                    resetGame()
                 }
                 .padding()
             }
         }
         .padding()
     }
+    
+    private func handleSelection(for country: Country) {
+        selectedAnswer = country
+        isCorrect = country == viewModel.correctAnswer
+
+        // Delay moving to the next question for 0.8 seconds
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            viewModel.checkAnswer(country)
+            selectedAnswer = nil
+            isCorrect = nil
+        }
+    }
+    
+    private func buttonColor(for country: Country) -> Color {
+        if let selected = selectedAnswer, selected == country {
+            return isCorrect == true ? Color.green : Color.red
+        }
+        return Color.blue
+    }
+    
+    private func resetGame() {
+        viewModel.startGame()
+        selectedAnswer = nil
+        isCorrect = nil
+    }
 }
+
 
 
 #Preview {
