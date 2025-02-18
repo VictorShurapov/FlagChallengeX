@@ -58,11 +58,22 @@ struct GameView: View {
         selectedAnswer = country
         isCorrect = country == viewModel.correctAnswer
 
+        provideHapticFeedback()
+        
         // Delay moving to the next question for 0.8 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             viewModel.checkAnswer(country)
             selectedAnswer = nil
             isCorrect = nil
+        }
+    }
+    
+    private func provideHapticFeedback() {
+        let generator = UINotificationFeedbackGenerator()
+        if isCorrect == true {
+            generator.notificationOccurred(.success)
+        } else {
+            generator.notificationOccurred(.error)
         }
     }
     
@@ -79,8 +90,6 @@ struct GameView: View {
         isCorrect = nil
     }
 }
-
-
 
 #Preview {
     GameView()
