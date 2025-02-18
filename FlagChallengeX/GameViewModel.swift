@@ -13,14 +13,18 @@ class GameViewModel: ObservableObject {
     @Published var selectedCountries: [Country] = []
     @Published var correctAnswer: Country?
     @Published var choices: [Country] = []
+    @Published var gameOverMode: Bool = false
+    private(set) var countriesCount = 5
     
     init() {
         startGame()
     }
     
     func startGame() {
+        currentQuestionIndex = 0
+        gameOverMode = false
         let allCountries = countries.shuffled()
-        selectedCountries = Array(allCountries.prefix(5))
+        selectedCountries = Array(allCountries.prefix(countriesCount))
         loadNextQuestion()
         score = 0
     }
@@ -45,6 +49,8 @@ class GameViewModel: ObservableObject {
         currentQuestionIndex += 1
         if currentQuestionIndex < selectedCountries.count {
             loadNextQuestion()
+        } else {
+            gameOverMode = true
         }
     }
 }
