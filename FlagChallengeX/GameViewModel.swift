@@ -7,13 +7,13 @@
 
 import Foundation
 
-class GameViewModel: ObservableObject {
-    @Published var score = 0
-    @Published var currentQuestionIndex = 0
-    @Published var selectedCountries: [Country] = []
-    @Published var correctAnswer: Country?
-    @Published var choices: [Country] = []
-    @Published var gameOverMode: Bool = false
+@Observable class GameViewModel {
+    var score = 0
+    var currentQuestionIndex = 0
+    var selectedCountries: [Country] = []
+    var correctAnswer: Country?
+    var choices: [Country] = []
+    var gameOverMode: Bool = false
     private(set) var countriesCount = 5
     
     init() {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct GameView: View {
-    @StateObject private var viewModel = GameViewModel()
+    @Environment(GameViewModel.self) private var viewModel
     @State private var selectedAnswer: Country? = nil
 
     var body: some View {

@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct FlagChallengeXApp: App {
+    @State private var game = GameViewModel()
+    
     var body: some Scene {
         WindowGroup {
             GameView()
+                .environment(game)
         }
     }
 }
