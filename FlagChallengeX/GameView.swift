@@ -10,7 +10,6 @@ import SwiftUI
 struct GameView: View {
     @StateObject private var viewModel = GameViewModel()
     @State private var selectedAnswer: Country? = nil
-    @State private var isCorrect: Bool? = nil
 
     var body: some View {
         VStack {
@@ -56,21 +55,19 @@ struct GameView: View {
     
     private func handleSelection(for country: Country) {
         selectedAnswer = country
-        isCorrect = country == viewModel.correctAnswer
 
-        provideHapticFeedback()
+        provideHapticFeedback(for: country)
         
         // Delay moving to the next question for 0.8 seconds
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             viewModel.checkAnswer(country)
             selectedAnswer = nil
-            isCorrect = nil
         }
     }
     
-    private func provideHapticFeedback() {
+    private func provideHapticFeedback(for selected: Country) {
         let generator = UINotificationFeedbackGenerator()
-        if isCorrect == true {
+        if selected == viewModel.correctAnswer {
             generator.notificationOccurred(.success)
         } else {
             generator.notificationOccurred(.error)
@@ -78,16 +75,17 @@ struct GameView: View {
     }
     
     private func buttonColor(for country: Country) -> Color {
-        if let selected = selectedAnswer, selected == country {
-            return isCorrect == true ? Color.green : Color.red
+        guard let selected = selectedAnswer else {
+            return .blue
         }
-        return Color.blue
+        return (selected == viewModel.correctAnswer) && (selected == country) ? .green
+             : (selected == country) ? .red
+             : .blue
     }
     
     private func resetGame() {
         viewModel.startGame()
         selectedAnswer = nil
-        isCorrect = nil
     }
 }
 
