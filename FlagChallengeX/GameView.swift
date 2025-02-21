@@ -42,6 +42,8 @@ struct GameView: View {
             Text("Score: \(viewModel.score)")
                 .font(.title)
                 .padding()
+                .contentTransition(.numericText(countsDown: true))
+                .animation(.default, value: viewModel.score)
             
             if viewModel.gameOverMode {
                 Button("Restart Game") {
